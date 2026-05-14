@@ -33,7 +33,7 @@ func (s *Service) newClient() (*Client, error) {
 }
 
 func NewMCPServer(svc *Service) *server.MCPServer {
-	mcpServer := server.NewMCPServer("Wilma MCP", "0.1.0", server.WithToolCapabilities(false), server.WithRecovery())
+	mcpServer := server.NewMCPServer("wilma-mcp", "0.1.0", server.WithToolCapabilities(false), server.WithRecovery())
 
 	mcpServer.AddTool(
 		mcp.NewTool("get_schedule",
