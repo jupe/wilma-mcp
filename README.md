@@ -11,7 +11,7 @@ An [MCP (Model Context Protocol)](https://modelcontextprotocol.io/) server for [
 
 ## Prerequisites
 
-- Python 3.11 or higher
+- Go 1.25.5 or higher
 - A Wilma account (student, guardian, or teacher)
 - Your school's Wilma URL (e.g., `https://yourschool.inschool.fi`)
 
@@ -19,15 +19,11 @@ An [MCP (Model Context Protocol)](https://modelcontextprotocol.io/) server for [
 
 ```bash
 # Clone the repository
-git clone https://github.com/jessemc98/wilma-mcp.git
+git clone https://github.com/jupe/wilma-mcp.git
 cd wilma-mcp
 
-# Create virtual environment
-python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install the package
-pip install -e .
+# Build binary
+go build -o bin/wilma-mcp ./cmd/wilma-mcp
 ```
 
 ## Configuration
@@ -59,8 +55,7 @@ If you use [OpenClaw](https://openclaw.ai/), this project includes a `SKILL.md` 
 {
   "mcpServers": {
     "wilma": {
-      "command": "/path/to/wilma-mcp/venv/bin/python",
-      "args": ["-m", "wilma_mcp.server"],
+      "command": "/path/to/wilma-mcp/bin/wilma-mcp",
       "cwd": "/path/to/wilma-mcp"
     }
   }
@@ -80,8 +75,7 @@ Add the server to your Claude Desktop configuration file:
 {
   "mcpServers": {
     "wilma": {
-      "command": "/path/to/wilma-mcp/venv/bin/python",
-      "args": ["-m", "wilma_mcp.server"],
+      "command": "/path/to/wilma-mcp/bin/wilma-mcp",
       "cwd": "/path/to/wilma-mcp"
     }
   }
@@ -89,6 +83,14 @@ Add the server to your Claude Desktop configuration file:
 ```
 
 Restart Claude Desktop after updating the configuration.
+
+## Running in SSE mode
+
+By default the server runs in `stdio` mode. To run with SSE transport:
+
+```bash
+./bin/wilma-mcp --transport sse --listen :8080 --base-url http://localhost:8080 --base-path /mcp
+```
 
 ## Available Tools
 
@@ -183,11 +185,12 @@ Once configured, you can ask Claude:
 ## Development
 
 ```bash
-# Install with dev dependencies
-pip install -e ".[dev]"
+# Format and tidy
+gofmt -w ./cmd ./internal
+go mod tidy
 
-# Run tests
-pytest
+# Run checks
+go test ./...
 ```
 
 ## Future Features (Planned)

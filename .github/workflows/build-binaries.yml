@@ -1,0 +1,54 @@
+name: Build binaries
+
+on:
+  push:
+    branches:
+      - main
+      - 'copilot/**'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: linux
+            arch: amd64
+            artifact: wilma-mcp-linux-amd64
+            binary: wilma-mcp
+          - os: windows
+            arch: amd64
+            artifact: wilma-mcp-windows-amd64
+            binary: wilma-mcp.exe
+          - os: darwin
+            arch: arm64
+            artifact: wilma-mcp-darwin-arm64
+            binary: wilma-mcp
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Build binary
+        env:
+          GOOS: ${{ matrix.os }}
+          GOARCH: ${{ matrix.arch }}
+          CGO_ENABLED: 0
+        run: |
+          mkdir -p dist/${{ matrix.artifact }}
+          go build -o dist/${{ matrix.artifact }}/${{ matrix.binary }} ./cmd/wilma-mcp
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: dist/${{ matrix.artifact }}/${{ matrix.binary }}
+          if-no-files-found: error
