@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"sort"
-	"strconv"
 	"strings"
 	"time"
 
@@ -396,15 +395,4 @@ func FormatSchedule(schedule DaySchedule) string {
 		lines = append(lines, strings.Join(parts, " "))
 	}
 	return strings.Join(lines, "\n")
-}
-
-func ParseIntString(value string, fallback int) int {
-	if value == "" {
-		return fallback
-	}
-	parsed, err := strconv.Atoi(value)
-	if err != nil {
-		return fallback
-	}
-	return parsed
 }
