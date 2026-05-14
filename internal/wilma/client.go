@@ -469,6 +469,7 @@ func parseMessageHTML(html, messageID string) (Message, error) {
 
 	content := strings.TrimSpace(doc.Find("div.panel-body").First().Text())
 	if content != "" {
+		// Remove Wilma confirmation dialog labels that are rendered inside message panel text.
 		content = regexp.MustCompile(`×\s*Varmistus\s*Jatka\s*Peruuta`).ReplaceAllString(content, "")
 		content = strings.TrimSpace(strings.ReplaceAll(content, "Vastaa viestin lähettäjälle", ""))
 	}
